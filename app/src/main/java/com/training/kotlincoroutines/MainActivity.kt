@@ -1,11 +1,13 @@
 package com.training.kotlincoroutines
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -22,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        GlobalScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             fakeResponse()
         }
 
@@ -33,7 +35,12 @@ class MainActivity : AppCompatActivity() {
         delay(2000)
         Log.d("MainActivity", Thread.currentThread().name.toString())
         withContext(Dispatchers.Main) {
-            Log.d("MainActivity", "Hello from withContext ${Thread.currentThread().name}")
+            startActivity(Intent(this@MainActivity, SecondActivity2::class.java))
+            finish()
+        }
+        while (true) {
+        Log.d("MainActivity", "Hello after withContext")
+        delay(1000)
         }
     }
 }
