@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.training.kotlincoroutines.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -15,32 +16,33 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
+    lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-        lifecycleScope.launch(Dispatchers.IO) {
-            fakeResponse()
-        }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        Log.d("MainActivity", "Hello after launch")
+        val job =lifecycleScope.launch(Dispatchers.IO) {
+            launch {
+                fakeResponse1()
+            }
+            launch {
+                fakeResponse2()
+            }
+
+        }
+            binding.helloWorld.setOnClickListener {
+                job.cancel()
+            }
+
     }
 
-    suspend fun fakeResponse() {
-        delay(2000)
-        Log.d("MainActivity", Thread.currentThread().name.toString())
-        withContext(Dispatchers.Main) {
-            startActivity(Intent(this@MainActivity, SecondActivity2::class.java))
-            finish()
-        }
-        while (true) {
-        Log.d("MainActivity", "Hello after withContext")
-        delay(1000)
-        }
+    suspend fun fakeResponse1() {
+       delay(5000)
+        Log.d("MainActivity", "fakeResponse: response1 ")
+    }
+    suspend fun fakeResponse2() {
+       delay(3000)
+        Log.d("MainActivity", "fakeResponse: response2 ")
     }
 }
