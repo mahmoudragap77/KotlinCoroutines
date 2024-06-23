@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.training.kotlincoroutines.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -47,7 +48,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun playWithJobs(){
-        job1 =lifecycleScope.launch {
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            Log.d("MainActivity", throwable.message.toString())
+        }
+        job1 =lifecycleScope.launch(exceptionHandler) {
             delay(2000)
             job2 =launch {
                 delay(2000)
@@ -64,6 +68,7 @@ class MainActivity : AppCompatActivity() {
             }
             job3 =launch {
                 delay(2000)
+                val respone =5/0
                 Log.d("MainActivity", "job3 started")
             }
 
