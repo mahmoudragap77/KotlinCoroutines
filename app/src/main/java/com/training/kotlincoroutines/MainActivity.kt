@@ -22,27 +22,34 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val job =lifecycleScope.launch(Dispatchers.IO) {
-            launch {
+        var firstResponse: String? = null
+        var secondResponse: String? = null
+        val job = lifecycleScope.launch(Dispatchers.IO) {
+            val job1 = launch {
                 fakeResponse1()
             }
-            launch {
+            val job2 = launch {
                 fakeResponse2()
             }
 
+            job1.join()   // wait for job1 to finish and then move on
+            Log.d("MainActivity", firstResponse.toString())
+            Log.d("MainActivity", secondResponse.toString())
+
         }
-            binding.helloWorld.setOnClickListener {
-                job.cancel()
-            }
+        binding.helloWorld.setOnClickListener {
+            job.cancel()
+        }
 
     }
 
-    suspend fun fakeResponse1() {
-       delay(5000)
-        Log.d("MainActivity", "fakeResponse: response1 ")
+    suspend fun fakeResponse1(): String {
+        delay(5000)
+        return "response1"
     }
-    suspend fun fakeResponse2() {
-       delay(3000)
-        Log.d("MainActivity", "fakeResponse: response2 ")
+
+    suspend fun fakeResponse2(): String {
+        delay(3000)
+        return "response2"
     }
 }
