@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.training.kotlincoroutines.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,19 +23,18 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var firstResponse: String? = null
-        var secondResponse: String? = null
+
         val job = lifecycleScope.launch(Dispatchers.IO) {
-            val job1 = launch {
+            val deferred1 = async {
                 fakeResponse1()
             }
-            val job2 = launch {
+            val deferred2 = async {
                 fakeResponse2()
             }
 
-            job1.join()   // wait for job1 to finish and then move on
-            Log.d("MainActivity", firstResponse.toString())
-            Log.d("MainActivity", secondResponse.toString())
+
+            Log.d("MainActivity", deferred1.await())
+            Log.d("MainActivity", deferred2.await())
 
         }
         binding.helloWorld.setOnClickListener {
