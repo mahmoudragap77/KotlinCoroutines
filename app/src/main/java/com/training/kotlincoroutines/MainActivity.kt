@@ -1,54 +1,82 @@
 package com.training.kotlincoroutines
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.training.kotlincoroutines.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
+    lateinit var job1:Job
+    lateinit var job2:Job
+    lateinit var job3:Job
+    lateinit var job4:Job
+    lateinit var job5:Job
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 
-        val job = lifecycleScope.launch(Dispatchers.IO) {
-            val deferred1 = async {
-                fakeResponse1()
-            }
-            val deferred2 = async {
-                fakeResponse2()
-            }
-
-
-            Log.d("MainActivity", deferred1.await())
-            Log.d("MainActivity", deferred2.await())
-
-        }
+//        val job = lifecycleScope.launch(Dispatchers.IO) {
+//            val deferred1 = async {
+//                fakeResponse1()
+//            }
+//            val deferred2 = async {
+//                fakeResponse2()
+//            }
+//
+//
+//            Log.d("MainActivity", deferred1.await())
+//            Log.d("MainActivity", deferred2.await())
+//
+//        }
         binding.helloWorld.setOnClickListener {
-            job.cancel()
+            job2.cancel()
         }
+
+
+            playWithJobs()
 
     }
 
-    suspend fun fakeResponse1(): String {
+    private fun playWithJobs(){
+        job1 =lifecycleScope.launch {
+            delay(2000)
+            job2 =launch {
+                delay(2000)
+                Log.d("MainActivity", "job2 started")
+                job4 =launch {
+                    delay(2000)
+                    Log.d("MainActivity", "job4 started")
+                }
+                job5 =launch {
+                    delay(2000)
+                    Log.d("MainActivity", "job5 started")
+                }
+
+            }
+            job3 =launch {
+                delay(2000)
+                Log.d("MainActivity", "job3 started")
+            }
+
+        }
+        Log.d("MainActivity", "job1 started")
+    }
+
+    private suspend fun fakeResponse1(): String {
         delay(5000)
         return "response1"
     }
 
-    suspend fun fakeResponse2(): String {
+    private suspend fun fakeResponse2(): String {
         delay(3000)
         return "response2"
     }
