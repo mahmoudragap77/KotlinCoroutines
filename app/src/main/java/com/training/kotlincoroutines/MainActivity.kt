@@ -11,6 +11,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -31,13 +32,14 @@ class MainActivity : AppCompatActivity() {
     private fun playWithFlow() {
         val flow = flow {
             for(i in 1..100){
-                emit("Item $i")
+                emit("Item $i : on {Thread ${Thread.currentThread().name}}")
                 delay(500)
             }
-        }
+        }.flowOn(Dispatchers.Default)
+
         lifecycleScope.launch {
             flow.collect{
-                Log.d("MainActivity", it)
+                Log.d("MainActivity", "$it on {Thread ${Thread.currentThread().name}}")
             }
         }
 
